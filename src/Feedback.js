@@ -24,8 +24,14 @@ const Feedback = () => {
     uploadPhotosButtonText,
   } = values;
 
-  //   event handler
+  //  destructuring env variables
+  const {
+    REACT_APP_API,
+    REACT_APP_CLOUDINARY_CLOUND_NAME,
+    REACT_APP_CLOUDINARY_UPLOAD_SECRET,
+  } = process.env;
 
+  //   event handler
   // We have a function returning another function
   const handleChange = name => event => {
     setValues({...values, [name]: event.target.value});
@@ -37,12 +43,41 @@ const Feedback = () => {
     setValues({...values, buttonText: '...sending'});
 
     // send to backend for email
-
     console.table({name, email, phone, message, uploadedFiles});
+  };
+
+  const uploadWidget = () => {
+    window.cloudinary.openUploadWidget(
+      {
+        cloud_name: REACT_APP_CLOUDINARY_CLOUND_NAME,
+        upload_preset: REACT_APP_CLOUDINARY_UPLOAD_SECRET,
+        tags: ['ebooks'],
+      },
+      function (error, result) {
+        // console.log(result);
+
+        setValues({
+          ...values,
+          uploadedFiles: result,
+          uploadPhotosButtonText: `${
+            result ? result.length : 0
+          } Photos uploaded`,
+        });
+      }
+    );
   };
 
   const feedbackForm = () => (
     <Fragment>
+      <div className='form-group-pt-5'>
+        <button
+          onClick={() => uploadWidget()}
+          className='btn-outline-secondary btn-block p-5'
+        >
+          {uploadPhotosButtonText}
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className='form-group'>
           <label className='text-muted'>Description</label>
