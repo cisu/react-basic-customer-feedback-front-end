@@ -25,12 +25,20 @@ const Feedback = () => {
   } = values;
 
   //   event handler
-  const handleChange = () => {
-    console.log('handle change');
+
+  // We have a function returning another function
+  const handleChange = name => event => {
+    setValues({...values, [name]: event.target.value});
   };
 
-  const handleSubmit = () => {
-    console.log('handle submit');
+  const handleSubmit = event => {
+    event.preventDefault();
+
+    setValues({...values, buttonText: '...sending'});
+
+    // send to backend for email
+
+    console.table({name, email, phone, message, uploadedFiles});
   };
 
   const feedbackForm = () => (
@@ -84,7 +92,7 @@ const Feedback = () => {
           />
         </div>
 
-        <button className='btn btn-outline btn-primary btn-block'>
+        <button className='btn btn-outline-primary btn-block'>
           {buttonText}
         </button>
       </form>
